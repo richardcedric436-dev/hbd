@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pour Ingride</title>
+<meta name="theme-color" content="#1e1020">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💌</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{min-height:100vh;display:grid;place-items:center;text-align:center;padding:2rem;background:radial-gradient(120% 80% at 50% 0%,#34172f,#1e1020 70%);color:#f6e3d0;font-family:"Cormorant Garamond",Georgia,serif;overflow:hidden}
+#coeurs{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+#coeurs span{position:absolute;bottom:-40px;color:#f08a9b;opacity:0;animation:monte linear forwards}
+@keyframes monte{10%{opacity:.6}100%{transform:translateY(-110vh) rotate(25deg);opacity:0}}
+
+/* Enveloppe */
+#ouverture{position:relative;z-index:1}
+.enveloppe{width:min(300px,78vw);aspect-ratio:3/2;background:#f6e3d0;border-radius:6px;position:relative;margin:0 auto 1.8rem;box-shadow:0 20px 60px #0008;cursor:pointer;animation:flotte 3.5s ease-in-out infinite}
+.rabat{position:absolute;top:0;left:0;right:0;height:60%;background:#ecd2bb;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .8s}
+.sceau{position:absolute;left:50%;top:60%;translate:-50% -50%;width:50px;height:50px;border-radius:50%;background:#d94f6a;display:grid;place-items:center;font-size:1.4rem;transition:opacity .4s}
+.enveloppe.ouvre .rabat{transform:rotateX(180deg)}
+.enveloppe.ouvre .sceau{opacity:0}
+.enveloppe:focus-visible{outline:2px solid #e8c07a;outline-offset:4px}
+@keyframes flotte{50%{transform:translateY(-10px)}}
+#ouverture p{font-size:1.4rem;font-style:italic;color:#f08a9b}
+#ouverture.ferme{display:none}
+
+/* Message */
+#message{position:relative;z-index:1;display:none;opacity:0;transition:opacity 1.2s}
+#message.visible{display:block}
+#message.affiche{opacity:1}
+h1{font-size:clamp(3rem,14vw,5rem);font-style:italic;font-weight:600;line-height:1.1}
+.coeur{display:block;margin-top:1rem;font-size:2rem;color:#f08a9b}
+
+@media (prefers-reduced-motion:reduce){#coeurs{display:none}*{animation:none!important;transition-duration:.01s!important}}
+</style>
+</head>
+<body>
+<div id="coeurs" aria-hidden="true"></div>
+
+<div id="ouverture">
+  <div class="enveloppe" id="env" role="button" tabindex="0" aria-label="Ouvrir l'enveloppe">
+    <div class="rabat"></div><div class="sceau">♥</div>
+  </div>
+  <p>Touche l'enveloppe</p>
+</div>
+
+<div id="message">
+  <h1>Joyeux anniversaire chérie</h1>
+  <span class="coeur">♥</span>
+</div>
+
+<script>
+const c = document.getElementById("coeurs");
+function coeur(){
+  const s = document.createElement("span");
+  s.textContent = "♥";
+  s.style.left = Math.random()*100 + "vw";
+  s.style.fontSize = (12 + Math.random()*18) + "px";
+  const d = 7 + Math.random()*5;
+  s.style.animationDuration = d + "s";
+  c.appendChild(s);
+  setTimeout(() => s.remove(), d*1000);
+}
+setInterval(coeur, 1000);
+
+const env = document.getElementById("env");
+function ouvrir(){
+  if(env.classList.contains("ouvre")) return;
+  env.classList.add("ouvre");
+  for(let i=0;i<12;i++) setTimeout(coeur, i*70);
+  setTimeout(() => {
+    document.getElementById("ouverture").classList.add("ferme");
+    const m = document.getElementById("message");
+    m.classList.add("visible");
+    requestAnimationFrame(() => requestAnimationFrame(() => m.classList.add("affiche")));
+  }, 900);
+}
+env.addEventListener("click", ouvrir);
+env.addEventListener("keydown", e => { if(e.key==="Enter"||e.key===" "){ e.preventDefault(); ouvrir(); }});
+</script>
+</body>
+</html>
